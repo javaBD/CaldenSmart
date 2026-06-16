@@ -25,6 +25,7 @@ class EscenasPageState extends State<EscenasPage> {
   final ScrollController _scrollController = ScrollController();
   TextEditingController delayController = TextEditingController();
   TextEditingController title = TextEditingController();
+  bool isEditing = false; 
 
   @override
   void initState() {
@@ -85,6 +86,7 @@ class EscenasPageState extends State<EscenasPage> {
     final args = ModalRoute.of(context)?.settings.arguments;
 
     if (args != null && args is Map<String, dynamic>) {
+      isEditing = true;
       if (currentBuilder == buildMainOptions) {
         setState(() {
           switch (args['evento']) {
@@ -123,6 +125,7 @@ class EscenasPageState extends State<EscenasPage> {
       }
     }
   }
+
 
   String formatDuration(Duration duration) {
     String twoDigits(int n) => n.toString().padLeft(2, '0');
@@ -438,7 +441,7 @@ class EscenasPageState extends State<EscenasPage> {
     bool isAtMainOptions = currentBuilder == buildMainOptions;
 
     return PopScope(
-      canPop: isAtMainOptions,
+      canPop: isEditing ? true : isAtMainOptions,
       onPopInvokedWithResult: (didPop, result) {
         if (didPop) return;
         setState(() {

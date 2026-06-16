@@ -449,6 +449,7 @@ class RollerPageState extends ConsumerState<RollerPage> {
     subToVars();
 
     if (bluetoothManager.hasLoggerBle) getRecordedData(deviceName);
+    addDeviceToCore(deviceName);
   }
 
   @override
@@ -653,7 +654,7 @@ class RollerPageState extends ConsumerState<RollerPage> {
 
   void setLarge(int grades) {
     String data = '$pc[7]($grades)';
-    //printLog.i(data);
+    // printLog.i(data);
     bluetoothManager.toolsUuid.write(data.codeUnits);
   }
 
@@ -669,8 +670,11 @@ class RollerPageState extends ConsumerState<RollerPage> {
   }
 
   void setRollerCalibration() {
-    String data = '$pc[9](0)';
-    bluetoothManager.toolsUuid.write(data.codeUnits);
+    try {
+      String data = '$pc[9](0)';
+      bluetoothManager.toolsUuid.write(data.codeUnits);
+      printLog.i('Se envio el comando de calibración $data');
+    } catch (_) {}
   }
 
   Widget _calibrationMoveButtons() {

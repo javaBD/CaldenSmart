@@ -800,6 +800,7 @@ class Rele1i1oPageState extends ConsumerState<Rele1i1oPage> {
       //*- Página 1: Estado del Dispositivo -*\\
       if (hasEntry) ...[
         SingleChildScrollView(
+          key: keys['rele1i1o:estado']!,
           child: SizedBox(
             key: keys['rele1i1o:activarNoti']!,
             height: MediaQuery.of(context).size.height * 0.8,
@@ -1217,8 +1218,9 @@ class Rele1i1oPageState extends ConsumerState<Rele1i1oPage> {
         ),
       ] else ...[
         SingleChildScrollView(
-          key: keys['rele1i1o:activarNoti']!,
+          key: keys['rele1i1o:estado']!,
           child: SizedBox(
+            key: keys['rele1i1o:activarNoti']!,
             height: MediaQuery.of(context).size.height * 0.8,
             child: Center(
               child: Padding(
@@ -1266,7 +1268,7 @@ class Rele1i1oPageState extends ConsumerState<Rele1i1oPage> {
                                 }
                               },
                               child: AnimatedContainer(
-                                key: keys['rele1i1o:estado']!,
+                              
                                 duration: const Duration(milliseconds: 500),
                                 padding: const EdgeInsets.all(20),
                                 decoration: BoxDecoration(

@@ -992,7 +992,7 @@ void addDeviceToCore(String deviceName) {
   try {
     if (deviceName.contains("Termometro") ||
         deviceName.contains("Detector") ||
-        ((deviceName.contains("Domotica") || deviceName.contains("Modulo")) &&
+        ((deviceName.contains("Domotica") || deviceName.contains("Modulo") || deviceName.contains("Rele")) &&
             !deviceName.contains("_"))) {
       return;
     }

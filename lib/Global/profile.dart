@@ -27,6 +27,7 @@ class ProfilePageState extends State<ProfilePage> {
     "Sonido 3",
     "Sonido 4",
     "Sonido 5",
+    "Sin sonido",
   ];
 
   bool isAccountOpen = false;
