@@ -439,9 +439,11 @@ class ProfilePageState extends State<ProfilePage> {
                               soundOfNotification['027313_IOT'] =
                                   'alarm${value + 1}';
                               saveSounds(soundOfNotification);
-                              NativeService().playNativeSound(
-                                  'alarm${value + 1}',
-                                  getAlarmDelay('alarm${value + 1}'));
+                              if (value + 1 != 6) {
+                                NativeService().playNativeSound(
+                                    'alarm${value + 1}',
+                                    getAlarmDelay('alarm${value + 1}'));
+                              }
                             }
                           });
                         },
@@ -524,9 +526,11 @@ class ProfilePageState extends State<ProfilePage> {
                               soundOfNotification['015773_IOT'] =
                                   'alarm${value + 1}';
                               saveSounds(soundOfNotification);
-                              NativeService().playNativeSound(
-                                  'alarm${value + 1}',
-                                  getAlarmDelay('alarm${value + 1}'));
+                              if (value + 1 != 6) {
+                                NativeService().playNativeSound(
+                                    'alarm${value + 1}',
+                                    getAlarmDelay('alarm${value + 1}'));
+                              }
                             }
                           });
                         },
@@ -607,9 +611,11 @@ class ProfilePageState extends State<ProfilePage> {
                               soundOfNotification['023430_IOT'] =
                                   'alarm${value + 1}';
                               saveSounds(soundOfNotification);
-                              NativeService().playNativeSound(
-                                  'alarm${value + 1}',
-                                  getAlarmDelay('alarm${value + 1}'));
+                              if (value + 1 != 6) {
+                                NativeService().playNativeSound(
+                                    'alarm${value + 1}',
+                                    getAlarmDelay('alarm${value + 1}'));
+                              }
                             }
                           });
                         },
@@ -850,7 +856,7 @@ class ProfilePageState extends State<ProfilePage> {
                         : CrossFadeState.showFirst,
                   ),
                   const Divider(color: color1),
-                                    ListTile(
+                  ListTile(
                     leading:
                         const Icon(HugeIcons.strokeRoundedStar, color: color1),
                     title: Text(

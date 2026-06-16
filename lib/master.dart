@@ -2199,27 +2199,44 @@ void showNotification(String title, String body, String sonido) async {
 
     printLog.i('NotificationId generado: $notificationId');
 
+    // 'alarm6' es el valor guardado cuando el usuario elige "Sin sonido"
+    final bool silencioso = sonido == 'alarm6';
+
     await flutterLocalNotificationsPlugin.show(
       notificationId,
       title,
       body,
       NotificationDetails(
-        android: AndroidNotificationDetails(
-          'CaldénSmart_$sonido',
-          'Eventos',
-          icon: '@mipmap/ic_launcher',
-          sound: RawResourceAndroidNotificationSound(sonido.toLowerCase()),
-          enableVibration: true,
-          importance: Importance.max,
-          styleInformation: BigTextStyleInformation(
-            body,
-            contentTitle: title,
-            summaryText: 'Caldén Smart',
-          ),
-        ),
+        android: silencioso
+            ? AndroidNotificationDetails(
+                'CaldénSmart_silent',
+                'Eventos silenciosos',
+                icon: '@mipmap/ic_launcher',
+                playSound: false,
+                enableVibration: false,
+                importance: Importance.defaultImportance,
+                styleInformation: BigTextStyleInformation(
+                  body,
+                  contentTitle: title,
+                  summaryText: 'Caldén Smart',
+                ),
+              )
+            : AndroidNotificationDetails(
+                'CaldénSmart_$sonido',
+                'Eventos',
+                icon: '@mipmap/ic_launcher',
+                sound: RawResourceAndroidNotificationSound(sonido.toLowerCase()),
+                enableVibration: true,
+                importance: Importance.max,
+                styleInformation: BigTextStyleInformation(
+                  body,
+                  contentTitle: title,
+                  summaryText: 'Caldén Smart',
+                ),
+              ),
         iOS: DarwinNotificationDetails(
-          sound: '$sonido.wav',
-          presentSound: true,
+          sound: silencioso ? null : '$sonido.wav',
+          presentSound: !silencioso,
         ),
       ),
     );
