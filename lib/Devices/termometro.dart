@@ -24,6 +24,8 @@ class TermometroPageState extends ConsumerState<TermometroPage> {
   bool _isAnimating = false;
   bool _isTutorialActive = false;
   List<TutorialItem> items = [];
+  Map<String, double> _historicTemp = {};
+  bool _loadingHistoric = true;
 
   void initItems() {
     items.addAll({
@@ -339,12 +341,6 @@ class TermometroPageState extends ConsumerState<TermometroPage> {
     });
   }
 
-  // Historial de temperatura cargado desde device-temperature-history.
-  // Antes vivía en globalDATA['$pc/$sn']?['historicTemp'] (campo del item de
-  // sime-domotica), ahora se carga async desde la tabla nueva.
-  Map<String, double> _historicTemp = {};
-  bool _loadingHistoric = true;
-
   @override
   void initState() {
     super.initState();
@@ -366,10 +362,6 @@ class TermometroPageState extends ConsumerState<TermometroPage> {
     _loadHistoricTemp();
   }
 
-  /// Carga el histórico de temperatura desde la tabla
-  /// device-temperature-history. Se llama una vez en initState.
-  /// Si después necesitás un refresh manual (ej: pull-to-refresh), llamala
-  /// de nuevo y va a actualizar el state.
   Future<void> _loadHistoricTemp() async {
     try {
       final data = await getTemperatureHistory(pc, sn);
@@ -516,14 +508,13 @@ class TermometroPageState extends ConsumerState<TermometroPage> {
         bluetoothManager.varsUuid.onValueReceived.listen((List<int> status) {
       var parts = utf8.decode(status).split(':');
 
-      if (parts.length == 4) {
-        setState(() {
-          actualTemp = parts[0];
-          // offsetTemp = parts[1];
-          alertMaxFlag = parts[2] == '1';
-          alertMinFlag = parts[3] == '1';
-        });
-      }
+      setState(() {
+        actualTemp = parts[0];
+        // offsetTemp = parts[1];
+        alertMaxFlag = parts[2] == '1';
+        alertMinFlag = parts[3] == '1';
+        termometroInitialized = parts[5] == '1';
+      });
     });
 
     bluetoothManager.device.cancelWhenDisconnected(trueStatusSub);
@@ -798,9 +789,11 @@ class TermometroPageState extends ConsumerState<TermometroPage> {
                             const ImageIcon(AssetImage(CaldenIcons.termometro),
                                 size: 80, color: color4),
                             const SizedBox(height: 16),
-                            const Text(
-                              'Temperatura Actual',
-                              style: TextStyle(
+                            Text(
+                              termometroInitialized
+                                  ? 'Temperatura Actual'
+                                  : 'Inicializando...',
+                              style: const TextStyle(
                                 color: color0,
                                 fontSize: 24,
                                 fontWeight: FontWeight.bold,
@@ -812,15 +805,21 @@ class TermometroPageState extends ConsumerState<TermometroPage> {
                               key: keys['termometro:estado']!,
                               child: FittedBox(
                                 fit: BoxFit.scaleDown,
-                                child: Text(
-                                  '${actualTemp.isEmpty ? "0" : actualTemp}°C',
-                                  style: const TextStyle(
-                                    color: color4,
-                                    fontSize: 48,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                  textAlign: TextAlign.center,
-                                ),
+                                child: termometroInitialized
+                                    ? Text(
+                                        actualTemp.isEmpty
+                                            ? "-"
+                                            : "$actualTemp°C",
+                                        style: const TextStyle(
+                                          color: color4,
+                                          fontSize: 48,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                        textAlign: TextAlign.center,
+                                      )
+                                    : const CircularProgressIndicator(
+                                        color: color4,
+                                      ),
                               ),
                             ),
                           ],
@@ -1526,7 +1525,7 @@ class _HistorialChartState extends State<_HistorialChart> {
               child: _buildChart(),
             ),
 
-            const SizedBox(height: 100),
+            const SizedBox(height: 200),
           ],
         ),
       ),

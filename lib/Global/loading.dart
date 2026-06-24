@@ -491,6 +491,7 @@ class LoadState extends State<LoadingPage> {
           alertMinFlag = partes[4] == '1';
           alertMaxTemp = partes[5];
           alertMinTemp = partes[6];
+          termometroInitialized = partes[8] == '1';
 
         default:
           printLog.i('Dispositivo no reconocido');

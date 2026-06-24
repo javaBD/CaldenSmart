@@ -9,7 +9,7 @@ import 'package:hugeicons/hugeicons.dart';
 
 class ControlPorGrupoWidget extends StatefulWidget {
   final VoidCallback? onBackToMain;
-    final Map<String, dynamic>? eventoExistente;
+  final Map<String, dynamic>? eventoExistente;
   const ControlPorGrupoWidget(
       {super.key, this.onBackToMain, this.eventoExistente});
 
@@ -23,7 +23,7 @@ class ControlPorGrupoWidgetState extends State<ControlPorGrupoWidget> {
 
   Map<String, bool> _wifiPermissions = {};
   bool _isLoadingPermissions = true;
- String? nombreOriginal;
+  String? nombreOriginal;
   @override
   void initState() {
     super.initState();
@@ -46,7 +46,6 @@ class ControlPorGrupoWidgetState extends State<ControlPorGrupoWidget> {
       currentStep = 0;
     }
   }
-
 
   Future<void> _loadWifiPermissions() async {
     Map<String, bool> permissions = {};
@@ -514,6 +513,12 @@ class ControlPorGrupoWidgetState extends State<ControlPorGrupoWidget> {
 
   bool _nombreDuplicado(String nombre) {
     if (nombre.trim().isEmpty) return false;
+
+    if (nombreOriginal != null &&
+        nombre.toLowerCase().trim() == nombreOriginal!.toLowerCase().trim()) {
+      return false;
+    }
+
     return eventosCreados.any(
       (e) =>
           (e['title'] as String?)?.toLowerCase().trim() ==
@@ -592,7 +597,6 @@ class ControlPorGrupoWidgetState extends State<ControlPorGrupoWidget> {
 
     Navigator.pop(context, true);
   }
-
 
   @override
   void dispose() {

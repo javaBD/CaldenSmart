@@ -4342,6 +4342,7 @@ class WifiPageState extends ConsumerState<WifiPage>
           String temp = deviceDATA['actualTemp'].toString();
           bool alertMaxFlag = deviceDATA['alert_maxflag'] ?? false;
           bool alertMinFlag = deviceDATA['alert_minflag'] ?? false;
+          bool init = deviceDATA['startup_evaluated'] ?? false;
           return RepaintBoundary(
             key: ValueKey(deviceName),
             child: Card(
@@ -4466,7 +4467,7 @@ class WifiPageState extends ConsumerState<WifiPage>
                                               CrossAxisAlignment.start,
                                           children: [
                                             Text(
-                                              'Temperatura: $temp °C',
+                                              init ? 'Temperatura: $temp °C' : 'Inicializando...',
                                               style: GoogleFonts.poppins(
                                                 color: color0,
                                                 fontSize: 15,
@@ -4787,7 +4788,7 @@ class WifiPageState extends ConsumerState<WifiPage>
               ? rawWp
               : int.tryParse(rawWp.toString().replaceAll('%', '')) ?? -1;
           bool moving = deviceDATA['moving'] ?? false;
-          bool isCalibrated = deviceDATA['isCalibrated'] ?? false;
+          bool isCalibrated = deviceDATA['is_calibrated'] ?? false;
 
           if (moving == false && actualPosition != workingPosition) {
             workingPosition = actualPosition;
@@ -8071,75 +8072,117 @@ class WifiPageState extends ConsumerState<WifiPage>
                                       children: [
                                         Expanded(
                                             child: _buildNotOwnerWarning()),
-                                        IconButton(
-                                          icon: const Icon(
-                                            HugeIcons.strokeRoundedDelete02,
-                                            color: color0,
-                                            size: 24,
-                                          ),
-                                          onPressed: () {
-                                            showAlertDialog(
-                                              context,
-                                              false,
-                                              const Text(
-                                                  '¿Eliminar este disparador?',
-                                                  style:
-                                                      TextStyle(color: color0)),
-                                              const Text(
-                                                  'Esta acción no se puede deshacer.',
-                                                  style:
-                                                      TextStyle(color: color0)),
-                                              <Widget>[
-                                                TextButton(
-                                                  style: ButtonStyle(
-                                                      foregroundColor:
-                                                          WidgetStateProperty
-                                                              .all(color0)),
-                                                  child: const Text('Cancelar'),
-                                                  onPressed: () =>
-                                                      Navigator.of(context)
-                                                          .pop(),
-                                                ),
-                                                TextButton(
-                                                  style: ButtonStyle(
-                                                      foregroundColor:
-                                                          WidgetStateProperty
-                                                              .all(color0)),
-                                                  child:
-                                                      const Text('Confirmar'),
-                                                  onPressed: () {
-                                                    setState(() {
-                                                      eventosCreados
-                                                          .removeWhere((e) =>
-                                                              e['title'] ==
-                                                                  grupo &&
-                                                              e['evento'] ==
-                                                                  'disparador');
-                                                      putEventos(
-                                                          currentUserEmail,
-                                                          eventosCreados);
-                                                      deleteEventoControlPorDisparadores(
-                                                          activador,
-                                                          currentUserEmail,
-                                                          grupo);
-                                                      todosLosDispositivos
-                                                          .removeWhere(
-                                                              (entry) =>
-                                                                  entry.key ==
-                                                                  grupo);
-                                                      savedOrder.removeWhere(
-                                                          (item) =>
-                                                              item['key'] ==
+                                        Row(
+                                          mainAxisSize: MainAxisSize.min,
+                                          children: [
+                                            // ✏️ Botón de Editar para Administrador Restringido
+                                            IconButton(
+                                              icon: const Icon(
+                                                HugeIcons.strokeRoundedPen01,
+                                                color: Colors.blueAccent,
+                                              ),
+                                              tooltip: 'Editar evento',
+                                              onPressed: () async {
+                                                final eventoAEditar =
+                                                    eventosCreados.firstWhere(
+                                                  (e) => e['title'] == grupo,
+                                                  orElse: () =>
+                                                      <String, dynamic>{},
+                                                );
+
+                                                if (eventoAEditar.isNotEmpty) {
+                                                  final result =
+                                                      await Navigator.pushNamed(
+                                                    context,
+                                                    '/escenas',
+                                                    arguments: eventoAEditar,
+                                                  );
+                                                  if (result == true &&
+                                                      mounted) {
+                                                    _buildDeviceListFromLoadedData();
+                                                  }
+                                                }
+                                              },
+                                            ),
+                                            // 🗑️ Botón de Eliminar original
+                                            IconButton(
+                                              icon: const Icon(
+                                                HugeIcons.strokeRoundedDelete02,
+                                                color: color0,
+                                                size: 24,
+                                              ),
+                                              onPressed: () {
+                                                showAlertDialog(
+                                                  context,
+                                                  false,
+                                                  const Text(
+                                                    '¿Eliminar este disparador?',
+                                                    style: TextStyle(
+                                                        color: color0),
+                                                  ),
+                                                  const Text(
+                                                    'Esta acción no se puede deshacer.',
+                                                    style: TextStyle(
+                                                        color: color0),
+                                                  ),
+                                                  <Widget>[
+                                                    TextButton(
+                                                      style: ButtonStyle(
+                                                        foregroundColor:
+                                                            WidgetStateProperty
+                                                                .all(color0),
+                                                      ),
+                                                      child: const Text(
+                                                          'Cancelar'),
+                                                      onPressed: () =>
+                                                          Navigator.of(context)
+                                                              .pop(),
+                                                    ),
+                                                    TextButton(
+                                                      style: ButtonStyle(
+                                                        foregroundColor:
+                                                            WidgetStateProperty
+                                                                .all(color0),
+                                                      ),
+                                                      child: const Text(
+                                                          'Confirmar'),
+                                                      onPressed: () {
+                                                        setState(() {
+                                                          eventosCreados
+                                                              .removeWhere((e) =>
+                                                                  e['title'] ==
+                                                                      grupo &&
+                                                                  e['evento'] ==
+                                                                      'disparador');
+                                                          putEventos(
+                                                              currentUserEmail,
+                                                              eventosCreados);
+                                                          deleteEventoControlPorDisparadores(
+                                                              activador,
+                                                              currentUserEmail,
                                                               grupo);
-                                                      _actualizarListasUI();
-                                                    });
-                                                    _saveOrder();
-                                                    Navigator.of(context).pop();
-                                                  },
-                                                ),
-                                              ],
-                                            );
-                                          },
+                                                          todosLosDispositivos
+                                                              .removeWhere(
+                                                                  (entry) =>
+                                                                      entry
+                                                                          .key ==
+                                                                      grupo);
+                                                          savedOrder.removeWhere(
+                                                              (item) =>
+                                                                  item['key'] ==
+                                                                  grupo);
+                                                          _actualizarListasUI();
+                                                        });
+                                                        _saveOrder();
+                                                        Navigator.of(context)
+                                                            .pop();
+                                                      },
+                                                    ),
+                                                  ],
+                                                );
+                                              },
+                                            ),
+                                          ],
                                         ),
                                       ],
                                     )

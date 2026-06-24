@@ -25,12 +25,11 @@ class EscenasPageState extends State<EscenasPage> {
   final ScrollController _scrollController = ScrollController();
   TextEditingController delayController = TextEditingController();
   TextEditingController title = TextEditingController();
-  bool isEditing = false; 
+  bool isEditing = false;
 
   @override
   void initState() {
     super.initState();
-    // printLog(nicknamesMap);
     selectedWeatherCondition = weatherConditions.first;
 
     currentBuilder = buildMainOptions;
@@ -125,7 +124,6 @@ class EscenasPageState extends State<EscenasPage> {
       }
     }
   }
-
 
   String formatDuration(Duration duration) {
     String twoDigits(int n) => n.toString().padLeft(2, '0');

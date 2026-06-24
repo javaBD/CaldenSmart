@@ -1090,6 +1090,10 @@ class ControlClimaWidgetState extends State<ControlClimaWidget> {
 
   bool _nombreDuplicado(String nombre) {
     if (nombre.trim().isEmpty) return false;
+    if (nombreOriginal != null &&
+        nombre.toLowerCase().trim() == nombreOriginal!.toLowerCase().trim()) {
+      return false;
+    }
     return eventosCreados.any(
       (e) =>
           (e['title'] as String?)?.toLowerCase().trim() ==

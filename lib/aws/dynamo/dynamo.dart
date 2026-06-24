@@ -244,7 +244,12 @@ Future<void> queryItems(String pc, String sn) async {
                     .putIfAbsent('$pc/$sn', () => {})
                     .addAll({key: value.boolValue ?? false});
                 break;
-              case 'isCalibrated':
+              case 'is_calibrated':
+                globalDATA
+                    .putIfAbsent('$pc/$sn', () => {})
+                    .addAll({key: value.boolValue ?? false});
+                break;
+              case 'startup_evaluated':
                 globalDATA
                     .putIfAbsent('$pc/$sn', () => {})
                     .addAll({key: value.boolValue ?? false});

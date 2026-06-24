@@ -559,6 +559,7 @@ bool alertMaxFlag = false;
 bool alertMinFlag = false;
 String alertMaxTemp = '';
 String alertMinTemp = '';
+bool termometroInitialized = false;
 //*- Termometro -*\\
 
 //*- Bloqueo admins -*\\
